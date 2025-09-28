@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Post</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>✏️ Edit Post</h1>
+    <a href="/">⬅ Back to Home</a>
+  </header>
+
+  <form id="edit-form">
+    <label>Title:</label>
+    <input type="text" id="title" required />
+
+    <label>Content:</label>
+    <textarea id="content" rows="6" required></textarea>
+
+    <button type="submit">Update Post</button>
+  </form>
+
+  <script>
+    // Get post ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+
+    // Load existing post
+    fetch(`/api/posts/${postId}`)
+      .then(res => res.json())
+      .then(post => {
+        document.getElementById('title').value = post.title;
+        document.getElementById('content').value = post.content;
+      })
+      .catch(err => alert("Post not found"));
+
+    // Handle form submission
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+
+      try {
+        const res = await fetch(`/api/posts/${postId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content })
+        });
+
+        if (res.ok) {
+          alert("Post updated!");
+          window.location.href = "/";
+        } else {
+          alert("Failed to update.");
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>

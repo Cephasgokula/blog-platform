@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Post</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>✏️ Create New Post</h1>
+    <a href="/">⬅ Back to Home</a>
+  </header>
+
+  <form id="create-form">
+    <label>Title:</label>
+    <input type="text" id="title" required />
+
+    <label>Content:</label>
+    <textarea id="content" rows="6" required></textarea>
+
+    <button type="submit">Publish Post</button>
+  </form>
+
+  <script>
+    document.getElementById('create-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+
+      try {
+        const res = await fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content })
+        });
+
+        if (res.ok) {
+          alert("Post created successfully!");
+          window.location.href = "/";
+        } else {
+          alert("Failed to create post.");
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
